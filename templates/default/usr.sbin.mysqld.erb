@@ -37,7 +37,9 @@
   /var/run/mysqld/mysqld.sock w,
 
   # smm-specific additions
-  <%= node['smm_mysql']['tmpdir'] %>/** rwk,
+<% node['smm_mysql']['server']['tmpdir'].each do |tmpdir| %>
+  <%= tmpdir %>/** rwk,
+<% end %>
   /vol/archive/** rwk,
   /vol/report/** rwk,
 

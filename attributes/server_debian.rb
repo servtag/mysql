@@ -11,7 +11,7 @@ when 'debian'
 
   # Platformisms.. filesystem locations and such.
   default['smm_mysql']['server']['basedir'] = '/usr'
-  default['smm_mysql']['server']['tmpdir'] = %w(/tmp)
+  #default['smm_mysql']['server']['tmpdir'] = %w(/tmp)
 
   default['smm_mysql']['server']['directories']['run_dir']              = '/var/run/mysqld'
   default['smm_mysql']['server']['directories']['log_dir']              = '/var/lib/mysql'
@@ -29,6 +29,10 @@ when 'debian'
   # wat
   default['smm_mysql']['tunable']['innodb_adaptive_flushing'] = false
   default['smm_mysql']['server']['skip_federated'] = false
+
+  #smm customizations
+  default['smm_mysql']['server']['tmpdir'] = %w(/mnt/mysql/tmp)
+
   else
     # type code here
 end
