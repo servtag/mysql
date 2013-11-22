@@ -22,7 +22,7 @@
 
 node.set['build_essential']['compiletime'] = true
 include_recipe 'build-essential::default'
-include_recipe 'mysql::client'
+include_recipe 'smm_mysql::client'
 
 loaded_recipes = if run_context.respond_to?(:loaded_recipes)
                    run_context.loaded_recipes
@@ -30,17 +30,19 @@ loaded_recipes = if run_context.respond_to?(:loaded_recipes)
                    node.run_state[:seen_recipes]
                  end
 
-if loaded_recipes.include?('mysql::percona_repo')
+if loaded_recipes.include?('smm_mysql::percona_repo')
   case node['platform_family']
   when 'debian'
     resources('apt_repository[percona]').run_action(:add)
   when 'rhel'
     resources('yum_key[RPM-GPG-KEY-percona]').run_action(:add)
     resources('yum_repository[percona]').run_action(:add)
+    else
+      # type code here
   end
 end
 
-node['mysql']['client']['packages'].each do |name|
+node['smm_mysql']['client']['packages'].each do |name|
   resources("package[#{name}]").run_action(:install)
 end
 

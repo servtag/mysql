@@ -17,28 +17,33 @@
 # limitations under the License.
 #
 
-if node.attribute?('ec2') && !FileTest.directory?(node['mysql']['ec2_path'])
+if node.attribute?('ec2') and !!node['ec2'] && !FileTest.directory?(node['smm_mysql']['ec2_path'])
   service 'mysql' do
     action :stop
   end
 
   execute 'install-mysql' do
-    command "mv #{node['mysql']['data_dir']} #{node['mysql']['ec2_path']}"
-    not_if { FileTest.directory?(node['mysql']['ec2_path']) }
+    command "mv #{node['smm_mysql']['data_dir']} #{node['smm_mysql']['ec2_path']}"
+    not_if { FileTest.directory?(node['smm_mysql']['ec2_path']) }
   end
 
-  [node['mysql']['ec2_path'], node['mysql']['data_dir']].each do |dir|
+  [node['smm_mysql']['ec2_path'], node['smm_mysql']['data_dir']].each do |dir|
     directory dir do
       owner 'mysql'
       group 'mysql'
     end
   end
 
-  mount node['mysql']['data_dir'] do
-    device   node['mysql']['ec2_path']
+  mount node['smm_mysql']['data_dir'] do
+    device   node['smm_mysql']['ec2_path']
     fstype  'none'
     options 'bind,rw'
     action  [:mount, :enable]
+  end
+
+  execute 'ensure MySQL data owned by MySQL user' do
+    command "chown -R mysql:mysql #{node['servtag_mysql']['data_dir']}"
+    action :run
   end
 
   service 'mysql' do

@@ -27,11 +27,11 @@ when 'debian'
   include_recipe 'apt::default'
 
   apt_repository 'percona' do
-    uri          node['mysql']['percona']['apt_uri']
+    uri          node['smm_mysql']['percona']['apt_uri']
     distribution node['lsb']['codename']
     components   %w[main]
-    keyserver    node['mysql']['percona']['apt_keyserver']
-    key          node['mysql']['percona']['apt_key_id']
+    keyserver    node['smm_mysql']['percona']['apt_keyserver']
+    key          node['smm_mysql']['percona']['apt_key_id']
     action       :add
   end
 when 'rhel'
@@ -53,4 +53,6 @@ when 'rhel'
     key         'RPM-GPG-KEY-percona'
     action      :add
   end
+  else
+    # type code here
 end

@@ -8,29 +8,29 @@ directory '/var/cache/local/preseeding' do
   recursive true
 end
 
-template '/var/cache/local/preseeding/mysql-server.seed' do
-  source 'mysql-server.seed.erb'
-  owner 'root'
-  group 'root'
-  mode '0600'
-  notifies :run, 'execute[preseed mysql-server]', :immediately
-end
-
 execute 'preseed mysql-server' do
   command '/usr/bin/debconf-set-selections /var/cache/local/preseeding/mysql-server.seed'
   action  :nothing
 end
 
+template '/var/cache/local/preseeding/mysql-server.seed' do
+  source 'mysql-server.seed.erb'
+  owner 'root'
+  group 'root'
+  mode '0600'
+  notifies :run, resources('execute[preseed mysql-server]'), :immediately
+end
+
 #----
 # Install software
 #----
-node['mysql']['server']['packages'].each do |name|
+node['smm_mysql']['server']['packages'].each do |name|
   package name do
     action :install
   end
 end
 
-node['mysql']['server']['directories'].each do |key, value|
+node['smm_mysql']['server']['directories'].each do |_, value|
   directory value do
     owner     'mysql'
     group     'mysql'
@@ -43,18 +43,18 @@ end
 #----
 # Grants
 #----
+cmd = install_grants_cmd
+execute 'install-grants' do
+  command cmd
+  action :nothing
+end
+
 template '/etc/mysql_grants.sql' do
   source 'grants.sql.erb'
   owner  'root'
   group  'root'
   mode   '0600'
-  notifies :run, 'execute[install-grants]', :immediately
-end
-
-cmd = install_grants_cmd
-execute 'install-grants' do
-  command cmd
-  action :nothing
+  notifies :run, resources('execute[install-grants]'), :immediately
 end
 
 #----
@@ -67,7 +67,7 @@ end
 # To do that, we'll need to stash the data_dir of the last chef-client
 # run somewhere and read it. Implementing that will come in "The Future"
 
-directory node['mysql']['data_dir'] do
+directory node['smm_mysql']['data_dir'] do
   owner     'mysql'
   group     'mysql'
   action    :create
@@ -78,25 +78,22 @@ template '/etc/init/mysql.conf' do
   source 'init-mysql.conf.erb'
 end
 
-template '/etc/apparmor.d/usr.sbin.mysqld' do
-  source 'usr.sbin.mysqld.erb'
-  action :create
-  notifies :reload, 'service[apparmor-mysql]', :immediately
-end
-
 service 'apparmor-mysql' do
   service_name 'apparmor'
   action :nothing
   supports :reload => true
 end
 
-template '/etc/mysql/my.cnf' do
-  source 'my.cnf.erb'
-  owner 'root'
-  group 'root'
-  mode '0644'
-  notifies :run, 'bash[move mysql data to datadir]', :immediately
-  notifies :reload, 'service[mysql]'
+template '/etc/apparmor.d/usr.sbin.mysqld' do
+  source 'usr.sbin.mysqld.erb'
+  action :create
+  notifies :reload, resources('service[apparmor-mysql]'), :immediately
+end
+
+service 'mysql' do
+  service_name 'mysql'
+  supports     :status => true, :restart => true, :reload => true
+  action       :nothing
 end
 
 # don't try this at home
@@ -105,13 +102,22 @@ bash 'move mysql data to datadir' do
   user 'root'
   code <<-EOH
   /usr/sbin/service mysql stop &&
-  mv /var/lib/mysql/* #{node['mysql']['data_dir']} &&
+  mv /var/lib/mysql/* #{node['smm_mysql']['data_dir']} &&
   /usr/sbin/service mysql start
   EOH
   action :nothing
-  only_if "[ '/var/lib/mysql' != #{node['mysql']['data_dir']} ]"
-  only_if "[ `stat -c %h #{node['mysql']['data_dir']}` -eq 2 ]"
+  only_if "[ '/var/lib/mysql' != #{node['smm_mysql']['data_dir']} ]"
+  only_if "[ `stat -c %h #{node['smm_mysql']['data_dir']}` -eq 2 ]"
   not_if '[ `stat -c %h /var/lib/mysql/` -eq 2 ]'
+end
+
+template '/etc/mysql/my.cnf' do
+  source 'my.cnf.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
+  notifies :run, resources('bash[move mysql data to datadir]'), :immediately
+  notifies :restart, resources('service[mysql]')
 end
 
 service 'mysql' do
