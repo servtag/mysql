@@ -196,3 +196,7 @@ default['smm_mysql']['remove_anonymous_users']                     = true
 default['smm_mysql']['tunable']['innodb_file_format']              = 'barracuda'
 default['smm_mysql']['tunable']['group_concat_max_len']            = '5000000'
 default['smm_mysql']['tunable']['event_scheduler']                 = 'on'
+
+include_attribute 'rad_archive::default'
+include_attribute 'rad_report::default'
+include_attribute 'dealomio_management_api::default'

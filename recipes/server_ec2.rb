@@ -46,6 +46,14 @@ if node.attribute?('ec2') and !!node['ec2'] && !FileTest.directory?(node['smm_my
     action :run
   end
 
+  %w(/vol/archive /vol/report).each do |path|
+    execute 'ensure MySQL data on additional EBS-volumes owned by MySQL user' do
+      command "chown -R mysql:mysql #{path}"
+      action :run
+      only_if { File.directory?(path) }
+    end
+  end
+
   service 'mysql' do
     action :start
   end
