@@ -47,7 +47,6 @@ if node.attribute?('ec2') and !!node['ec2'] && !FileTest.directory?(node['smm_my
   end
 
   service 'mysql' do
-    start_command '/usr/sbin/service mysql start'
     action :start
   end
 end
