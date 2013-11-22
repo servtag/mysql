@@ -1,13 +1,13 @@
 # require 'pry'
 
-node['mysql']['server']['packages'].each do |name|
+node['smm_mysql']['server']['packages'].each do |name|
   package name do
     action :install
   end
 end
 
 #----
-node['mysql']['server']['directories'].each do |key, value|
+node['smm_mysql']['server']['directories'].each do |_, value|
   directory value do
     owner     'mysql'
     group     'mysql'
@@ -17,7 +17,7 @@ node['mysql']['server']['directories'].each do |key, value|
   end
 end
 
-directory node['mysql']['data_dir'] do
+directory node['smm_mysql']['data_dir'] do
   owner     'mysql'
   group     'mysql'
   action    :create
@@ -31,7 +31,7 @@ template 'initial-my.cnf' do
   owner 'root'
   group 'root'
   mode '0644'
-  notifies :start, 'service[mysql-start]', :immediately
+  notifies :start, resources('service[mysql-start]'), :immediately
 end
 
 # hax
@@ -53,19 +53,19 @@ execute 'assign-root-password' do
   only_if "/usr/bin/mysql -u root -e 'show databases;'"
 end
 
+cmd = install_grants_cmd
+execute 'install-grants' do
+  command cmd
+  action :nothing
+end
+
 template '/etc/mysql_grants.sql' do
   source 'grants.sql.erb'
   owner  'root'
   group  'root'
   mode   '0600'
   action :create
-  notifies :run, 'execute[install-grants]', :immediately
-end
-
-cmd = install_grants_cmd
-execute 'install-grants' do
-  command cmd
-  action :nothing
+  notifies :run, resources('execute[install-grants]'), :immediately
 end
 
 #----
@@ -75,7 +75,7 @@ template 'final-my.cnf' do
   owner 'root'
   group 'root'
   mode '0644'
-  notifies :reload, 'service[mysql]', :immediately
+  notifies :reload, resources('service[mysql]'), :immediately
 end
 
 service 'mysql' do
