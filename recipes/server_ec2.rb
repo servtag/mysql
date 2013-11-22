@@ -42,7 +42,7 @@ if node.attribute?('ec2') and !!node['ec2'] && !FileTest.directory?(node['smm_my
   end
 
   execute 'ensure MySQL data owned by MySQL user' do
-    command "chown -R mysql:mysql #{node['servtag_mysql']['data_dir']}"
+    command "chown -R mysql:mysql #{node['smm_mysql']['data_dir']}"
     action :run
   end
 
