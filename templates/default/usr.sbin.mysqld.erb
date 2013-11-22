@@ -36,5 +36,10 @@
   /var/run/mysqld/mysqld.pid w,
   /var/run/mysqld/mysqld.sock w,
 
+  # smm-specific additions
+  <%= node['smm_mysql']['tmpdir'] %>/** rwk,
+  /vol/archive/** rwk,
+  /vol/report/** rwk,
+
   /sys/devices/system/cpu/ r,
 }
