@@ -102,6 +102,9 @@ end
 
 service 'mysql' do
   service_name 'mysql'
+  if node['smm_mysql']['use_upstart']
+    provider Chef::Provider::Service::Upstart
+  end
   supports     :status => true, :restart => true, :reload => true
   action       :nothing
 end

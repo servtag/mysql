@@ -32,6 +32,8 @@ when 'debian'
   #smm customizations
   default['smm_mysql']['server']['tmpdir'] = %w(/mnt/mysql/tmp)
 
+  #smm additions
+  default['smm_mysql']['use_upstart'] = node['platform'] == 'ubuntu' && node['platform_version'].to_f >= 10.04
   else
     # type code here
 end
