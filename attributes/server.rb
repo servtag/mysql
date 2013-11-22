@@ -19,7 +19,7 @@
 
 # Probably driven from wrapper cookbooks, environments, or roles.
 # Keep in this namespace for backwards compat
-#default['smm_mysql']['bind_address']               = node.attribute?('cloud') && node['cloud']['local_ipv4'] ? node['cloud']['local_ipv4'] : node['ipaddress']
+
 default['smm_mysql']['port']                       = 3306
 default['smm_mysql']['nice']                       = 0
 
@@ -35,7 +35,7 @@ default['smm_mysql']['auto-increment-increment']        = 1
 default['smm_mysql']['auto-increment-offset']           = 1
 
 default['smm_mysql']['allow_remote_root']               = false
-#default['smm_mysql']['remove_anonymous_users']          = false
+
 default['smm_mysql']['remove_test_database']            = false
 default['smm_mysql']['root_network_acl']                = nil
 default['smm_mysql']['tunable']['character-set-server'] = 'utf8'
@@ -47,8 +47,7 @@ default['smm_mysql']['tunable']['myisam_sort_buffer_size']   = '8M'
 default['smm_mysql']['tunable']['myisam_max_sort_file_size'] = '2147483648'
 default['smm_mysql']['tunable']['myisam_repair_threads']     = '1'
 default['smm_mysql']['tunable']['myisam-recover']            = 'BACKUP'
-#default['smm_mysql']['tunable']['max_allowed_packet']   = '16M'
-#default['smm_mysql']['tunable']['max_connections']      = '800'
+
 default['smm_mysql']['tunable']['max_connect_errors']   = '10'
 default['smm_mysql']['tunable']['concurrent_insert']    = '2'
 default['smm_mysql']['tunable']['connect_timeout']      = '10'
@@ -57,12 +56,10 @@ default['smm_mysql']['tunable']['max_heap_table_size']  = node['smm_mysql']['tun
 default['smm_mysql']['tunable']['bulk_insert_buffer_size'] = node['smm_mysql']['tunable']['tmp_table_size']
 default['smm_mysql']['tunable']['net_read_timeout']     = '30'
 default['smm_mysql']['tunable']['net_write_timeout']    = '30'
-#default['smm_mysql']['tunable']['table_cache']          = '128'
-#default['smm_mysql']['tunable']['table_open_cache']     = node['smm_mysql']['tunable']['table_cache'] # table_cache is deprecated
-                                                                                              # in favor of table_open_cache
+
 default['smm_mysql']['tunable']['thread_cache_size']    = 8
 default['smm_mysql']['tunable']['thread_concurrency']   = 10
-#default['smm_mysql']['tunable']['thread_stack']         = '256K'
+
 default['smm_mysql']['tunable']['sort_buffer_size']     = '2M'
 default['smm_mysql']['tunable']['read_buffer_size']     = '128k'
 default['smm_mysql']['tunable']['read_rnd_buffer_size'] = '256k'
@@ -102,9 +99,9 @@ default['smm_mysql']['tunable']['log_queries_not_using_index']     = true
 default['smm_mysql']['tunable']['log_bin_trust_function_creators'] = false
 
 default['smm_mysql']['tunable']['innodb_log_file_size']            = '5M'
-#default['smm_mysql']['tunable']['innodb_buffer_pool_size']         = '128M'
+
 default['smm_mysql']['tunable']['innodb_buffer_pool_instances']    = '4'
-#default['smm_mysql']['tunable']['innodb_additional_mem_pool_size'] = '8M'
+
 default['smm_mysql']['tunable']['innodb_data_file_path']           = 'ibdata1:10M:autoextend'
 default['smm_mysql']['tunable']['innodb_flush_method']             = false
 default['smm_mysql']['tunable']['innodb_log_buffer_size']          = '8M'

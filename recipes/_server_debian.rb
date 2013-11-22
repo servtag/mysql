@@ -40,6 +40,16 @@ node['smm_mysql']['server']['directories'].each do |_, value|
   end
 end
 
+node['smm_mysql']['server']['tmpdir'].each do |tmpdir|
+  directory tmpdir do
+    owner     'mysql'
+    group     'mysql'
+    mode      '0775'
+    action    :create
+    recursive true
+  end
+end
+
 #----
 # Grants
 #----
