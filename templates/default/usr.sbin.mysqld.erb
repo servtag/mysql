@@ -30,11 +30,18 @@
   /var/log/mysql.log rw,
   /var/log/mysql.err rw,
   /var/lib/mysql/ r,
-  <%= node['mysql']['data_dir'] %>/** rwk,
+  <%= node['smm_mysql']['data_dir'] %>/** rwk,
   /var/log/mysql/ r,
   /var/log/mysql/* rw,
   /var/run/mysqld/mysqld.pid w,
   /var/run/mysqld/mysqld.sock w,
+
+  # smm-specific additions
+<% node['smm_mysql']['server']['tmpdir'].each do |tmpdir| %>
+  <%= tmpdir %>/** rwk,
+<% end %>
+  /vol/archive/** rwk,
+  /vol/report/** rwk,
 
   /sys/devices/system/cpu/ r,
 }

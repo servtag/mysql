@@ -25,27 +25,29 @@ if Chef::Config[:solo]
     server_debian_password
     server_root_password
     server_repl_password
-  ].select { |attr| node['mysql'][attr].nil? }.map { |attr| %Q{node['mysql']['#{attr}']} }
+  ].select { |attr| node['smm_mysql'][attr].nil? }.map { |attr| %Q{node['smm_mysql']['#{attr}']} }
 
   unless missing_attrs.empty?
     Chef::Application.fatal! "You must set #{missing_attrs.join(', ')} in chef-solo mode." \
-    " For more information, see https://github.com/opscode-cookbooks/mysql#chef-solo-note"
+    ' For more information, see https://github.com/opscode-cookbooks/mysql#chef-solo-note'
   end
 else
   # generate all passwords
-  node.set_unless['mysql']['server_debian_password'] = secure_password
-  node.set_unless['mysql']['server_root_password']   = secure_password
-  node.set_unless['mysql']['server_repl_password']   = secure_password
+  node.set_unless['smm_mysql']['server_debian_password'] = secure_password
+  node.set_unless['smm_mysql']['server_root_password']   = secure_password
+  node.set_unless['smm_mysql']['server_repl_password']   = secure_password
   node.save
 end
 
 case node['platform_family']
 when 'rhel'
-  include_recipe 'mysql::_server_rhel'
+  include_recipe 'smm_mysql::_server_rhel'
 when 'debian'
-  include_recipe 'mysql::_server_debian'
+  include_recipe 'smm_mysql::_server_debian'
 when 'mac_os_x'
-  include_recipe 'mysql::_server_mac_os_x'
+  include_recipe 'smm_mysql::_server_mac_os_x'
 when 'windows'
-  include_recipe 'mysql::_server_windows'
+  include_recipe 'smm_mysql::_server_windows'
+  else
+    # type code here
 end
