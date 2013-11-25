@@ -37,4 +37,20 @@ SET PASSWORD FOR 'root'@'localhost' = PASSWORD('<%= node['smm_mysql']['server_ro
 
 # allow root to connect from a remote network if root_network_acl is not nil
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'<%= node['smm_mysql']['root_network_acl'] %>' IDENTIFIED BY '<%= node['smm_mysql']['server_root_password'] %>' WITH GRANT OPTION;
+
 <% end -%>
+
+# smm additions
+<% if node[:opsworks][:instance][:layers].include?('archive') %>
+create database if not exists <%= node[:rad_archive][:database] %>;
+grant select on *.* to '<%= node[:rad_archive][:read_only_user][:name] %>'@'<%= node[:opsworks][:layers][:report][:instances].keys.first %>' identified by '<%= node[:rad_archive][:read_only_user][:pass] %>';
+<% end %>
+
+<% if node[:opsworks][:instance][:layers].include?('report') %>
+create database if not exists <%= node[:rad_report][:database] %>;
+<% end %>
+
+<% if node[:opsworks][:instance][:layers].include?('management') %>
+create database if not exists <%= node[:dealomio_management_api][:database] %>;
+grant select on *.* to '<%= node[:dealomio_management_api][:read_only_user][:name] %>'@'<%= node[:opsworks][:layers][:report][:instances].keys.first %>' identified by '<%= node[:dealomio_management_api][:read_only_user][:pass] %>';
+<% end %>
