@@ -285,6 +285,8 @@ innodb_adaptive_checkpoint = <%= node['smm_mysql']['tunable']['innodb_adaptive_c
 # shipped with MySQL distributions (my-huge.cnf, my-medium.cnf, and so forth).
 #
 skip-federated
+<% else %>
+federated
 <% end %>
 #
 # * Security Features
