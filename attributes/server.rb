@@ -166,7 +166,7 @@ default['smm_mysql']['security']['local_infile']            = nil
 if node.attribute?('cloud') && node['cloud']['local_ipv4']
   default['smm_mysql']['bind_address'] = node['cloud']['local_ipv4']
 else
-  default['smm_mysql']['bind_address'] = Servtag::Helpers.local_ip(node)
+  default['smm_mysql']['bind_address'] = node[:opsworks][:instance][:private_ip]
 end
 
 if (memory_total = node.memory.total.split('kB').first.to_i/1000)
