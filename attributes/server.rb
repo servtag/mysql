@@ -170,7 +170,7 @@ else
 end
 
 if (memory_total = node.memory.total.split('kB').first.to_i/1000)
-  if memory_total > 16000
+  if memory_total > 15000
     innodb_buffer_pool_size = '10240M'
   elsif memory_total > 4000
     innodb_buffer_pool_size = '2048M'
