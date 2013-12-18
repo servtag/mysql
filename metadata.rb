@@ -26,6 +26,7 @@ supports 'windows'
 
 depends 'openssl',         '~> 1.1'
 depends 'build-essential', '~> 1.4'
+depends 'smm_monit'
 
 # wat
 suggests 'homebrew'

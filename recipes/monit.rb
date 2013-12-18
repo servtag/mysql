@@ -1,7 +1,4 @@
-service 'monit' do
-  supports :status => false, :restart => true, :reload => true
-  action :nothing
-end
+include_recipe 'smm_monit::default'
 
 template '/etc/monit/conf.d/mysql.monitrc' do
   source 'mysql.monitrc.erb'
