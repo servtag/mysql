@@ -1,6 +1,6 @@
 service 'monit' do
   supports :status => false, :restart => true, :reload => true
-  action [:enable, :nothing]
+  action :nothing
 end
 
 template '/etc/monit/conf.d/mysql.monitrc' do
